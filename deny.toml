@@ -1,0 +1,61 @@
+# cargo-deny yapılandırması: lisans, güvenlik bildirimi, yinelenen sürüm ve kaynak denetimi.
+# Çalıştır: `cargo deny check` (bkz. docs/DEPENDENCIES.md). Framework deny.toml ile aynı politika.
+
+[graph]
+all-features = true
+
+[advisories]
+# RustSec veritabanı. Bakımsız (unmaintained) crate'ler dolaylı da olsa hata; her istisna
+# kimliğiyle ve gerekçesiyle aşağıda (toptan gizleme yok — 2026-10-16). Yalnız bu
+# ağaçta gerçekten geçerli istisna yazılır; framework'ün ttf-parser istisnası burada yok.
+unmaintained = "all"
+yanked = "deny"
+ignore = []
+
+[licenses]
+# Nuxut MIT lisanslı. İzinli, MIT ile dağıtılabilen lisanslar; GPL/LGPL/AGPL ailesi yok
+# (kütüphane tüketicilerini copyleft'e zorlar).
+allow = [
+    "MIT",
+    "MIT-0",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Zlib",
+    "Unicode-3.0",
+    "MPL-2.0",
+    "CC0-1.0",
+    "BSL-1.0",
+    "Unlicense",
+    "0BSD",
+    "OFL-1.1",
+    "NCSA",
+    # webpki-root-certs (Mozilla kök sertifika verisi; nuxut-net → rustls-platform-verifier)
+    "CDLA-Permissive-2.0",
+]
+confidence-threshold = 0.9
+# Kendi crate'lerimiz de denetlenir (hepsi MIT; `private.ignore` yayımlanmayanları atlardı,
+# framework crate'lerinde publish = false yok — 2026-10-16 kaldırıldı).
+
+[bans]
+# Aynı crate'in iki sürümü derleme süresi ve ikili boyutu demektir: uyarı (her biri
+# DEPENDENCIES.md'de gerekçelendirilir ya da giderilir).
+multiple-versions = "warn"
+# Kayıt bağımlılıklarında `*` sürüm yasak (2026-10-16); path bağımlılıkları
+# aşağıdaki allow-wildcard-paths ile muaf.
+wildcards = "deny"
+highlight = "all"
+# Path bağımlılıkları (workspace içi) joker sayılmaz.
+allow-wildcard-paths = true
+deny = [
+    # OpenSSL yerine rustls (nuxut-net) — kazara girmesin.
+    { name = "openssl-sys" },
+    { name = "openssl" },
+]
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]

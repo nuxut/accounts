@@ -1,0 +1,7 @@
+# gitleaks: varsayılan kurallar + bilinen test verisi (sır değil; yayın hattı ikinci göz olarak çalıştırır).
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Test verisi: geçersiz kimlik örneği"
+regexes = ['''ABCDEF0123456789''']
